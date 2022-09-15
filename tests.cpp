@@ -2,7 +2,31 @@
 #include <cmath>
 
 #include "construct_matrix.hpp"
+#include "algorithm.hpp"
 using namespace std;
+
+bool test_max_offdiag_symmetric(){
+    // makes a test matrix
+    arma::mat test_mat(4,4,arma::fill::eye);
+    test_mat(0,3) = 0.5;
+    test_mat(3,0) = 0.5;
+    test_mat(1,2) = -0.7;
+    test_mat(2,1) = -0.7;
+
+    // Indices that are supposed to be updated
+    // Function call to get max value
+    int k,l;
+    double max_val = max_offdiag_symmetric(test_mat,k,l);
+
+    // Comparison between expected and computed values
+    if (max_val != -0.7 || k != 1 || l != 2){
+        cout << "You dun goofed \n";
+        cout << "max_val = " << max_val << endl;
+        return false;
+    }
+
+    return true;
+}
 
 bool test_tridiagonal_construction(){
 
