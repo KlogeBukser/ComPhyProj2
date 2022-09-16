@@ -1,7 +1,41 @@
 #include <armadillo>
 #include <cmath>
+#include "algorithm.hpp"
 
 using namespace std;
+
+
+void jacobi_eigensolver(arma::mat& A, double eps, arma::vec& eigenvalues,
+arma::mat& eigenvectors, const int maxiter, int& iterations, bool& converged){
+    // Lots of stuff
+
+    // Declarations for largest off-diagonal value, and the corresponding indeces
+    // max_val is initialized to make sure the while function works
+    double max_val = 2*eps;
+    int k,l;
+
+    // Rotation matrix + dimension of matrices
+    int n = A.n_cols;
+    arma::mat R(n,n,arma::fill::eye);
+
+    // Start at 0 iterations, and without convergence
+    iterations = 0;
+    converged = false;
+
+    while (iterations < maxiter || max_val > eps){
+        max_val = max_offdiag_symmetric(A, k, l);
+        if (max_val == 0) {
+            converged = true;
+            break;
+        }
+        jacobi_rotate(A, R, k, l);
+        iterations++;
+    }
+
+    eigenvectors = R;
+    eigenvalues = arma::diagvec(A);
+
+}
 
 void jacobi_rotate(arma::mat& A, arma::mat& R, const int& k, const int& l){
     // Rotates the matrix A once to set A_(kl) = A_(lk) = 0
@@ -68,13 +102,16 @@ double max_offdiag_symmetric(const arma::mat& A, int& k, int& l){
     // Updates the indices k and l so they become the indices of the largest
     // off diagonal element in a symmetric matrix
     // Returns the largest off- diagonal value
+
+    // Finds dimension of matrix
+    // Sets max_val to -1 to make sure k,l are given values
     int n = A.n_cols;
-    double max_val = 0.;
-    
+    double max_val = -1.;
+
     // Checks every element above the diagonal
     for (int i = 0; i < n - 1; i++){
         for (int j = i + 1; j < n; j++){
-            if (abs(A(i,j)) > abs(max_val)){
+            if (abs(A(i,j)) > max_val){
                 // Updates value if condition is met
                 max_val = abs(A(i,j));
                 k = i;
