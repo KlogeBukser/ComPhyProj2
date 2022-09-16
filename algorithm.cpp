@@ -7,11 +7,9 @@ using namespace std;
 
 void jacobi_eigensolver(arma::mat& A, double eps, arma::vec& eigenvalues,
 arma::mat& eigenvectors, const int maxiter, int& iterations, bool& converged){
-    // Lots of stuff
 
-    // Declarations for largest off-diagonal value, and the corresponding indeces
-    // max_val is initialized to make sure the while function works
-    double max_val = 2*eps;
+    // Declarations for largest off-diagonal value, and the corresponding indices
+    double max_val;
     int k,l;
 
     // Rotation matrix + dimension of matrices
@@ -23,19 +21,29 @@ arma::mat& eigenvectors, const int maxiter, int& iterations, bool& converged){
     converged = false;
 
     while (iterations < maxiter){
+        // Updates the matrix up to a maxiter times, or until convergence is reached
+
+        // Finds the largest off-diagonal element, and checks if it is small enough
+        // If it is, convergence is reached, and the program is terminated
         max_val = max_offdiag_symmetric(A, k, l);
         if (max_val < eps) {
             converged = true;
             break;
         }
+
+        // Rotates away the largest off-diagonal element with the jacobi algorithm
         jacobi_rotate(A, R, k, l);
         iterations++;
     }
 
-    cout << R << endl;
-    eigenvectors = R;
+    // Collects eigenvalues and eigenvectors from the diagonalised metrix, and the rotation matrix respectively
     eigenvalues = arma::diagvec(A);
+    eigenvectors = R;
 
+    // Sorts eigenvalues in ascending order, and eigenvectors in the same order
+    arma::uvec indices = arma::sort_index(eigenvalues);
+    eigenvectors = eigenvectors.cols(indices);
+    eigenvalues = eigenvalues.elem(indices);
 }
 
 void jacobi_rotate(arma::mat& A, arma::mat& R, const int& k, const int& l){
@@ -54,29 +62,28 @@ void jacobi_rotate(arma::mat& A, arma::mat& R, const int& k, const int& l){
     double c = 1/sqrt(1 + pow(t,2));
     double s = c*t;
 
-    // Updates affected diagonal elements of A
-    // the variable tau is recycled
-    // method 1:
-    // 18 FlOPs
-    tau = A(k,k);
-    A(k,k) = tau*pow(c,2) - 2 * A(k,l)*c*s + A(l,l)*pow(s,2);
-    A(l,l) = A(l,l)*pow(c,2) + 2* A(k,l)*c*s + tau*pow(s,2);
 
-    /*
-    // Alternative method for the previous section that might reduce computation speed,
-    // but lose readability
+    // Updates affected diagonal elements of A
+    // Temporary values are used to reduce amount of FlOPs
+    // Does the same as the two lines of code in a comment below
+    // Recycles tau
     // 7 FlOPs
     tau = A(k,k);
     double temp3 = pow(c,2)*temp1 + temp2*c*s;
     A(k,k) = A(l,l) - temp3;
     A(l,l) = tau + temp3;
+
+    /* // Alternative method with 18 FLOPs
+    A(k,k) = tau*pow(c,2) - 2 * A(k,l)*c*s + A(l,l)*pow(s,2);
+    A(l,l) = A(l,l)*pow(c,2) + 2* A(k,l)*c*s + tau*pow(s,2);
     */
 
-    // Updates off-diagonal elements of A
+
+    // Updates affected off-diagonal elements of A
     A(k,l) = 0;
     A(l,k) = 0;
     int n = A.n_cols;
-    for (int i = 0; i < n-1; i++){
+    for (int i = 0; i < n; i++){
         // Updates the intersection of row i and columns k and l for the rotations matrix R
         // Recycles tau
         tau = R(i,k);
@@ -87,6 +94,7 @@ void jacobi_rotate(arma::mat& A, arma::mat& R, const int& k, const int& l){
         // Updates the intersection of row i and columns k and l for the matrix A
         // Updates corresponding intersections to keep it symmetric
         // Skips if i is equal to k or l, as this would would update the diagonal, and A(k,l)
+        // Order of the block below is chosen to avoid extra temporary variables
         if (i == k || i == l){
             continue;
         }
@@ -95,8 +103,6 @@ void jacobi_rotate(arma::mat& A, arma::mat& R, const int& k, const int& l){
         A(k,i) = A(i,k);
         A(l,i) = A(i,l);
     }
-
-    return;
 }
 
 double max_offdiag_symmetric(const arma::mat& A, int& k, int& l){

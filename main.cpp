@@ -16,7 +16,7 @@ int main(int argc, char * argv[]){
 
     if (!test_tridiagonal_construction()){
         //This is just a test, it isn't needed for the program to work.
-        cout << "CSonstruction failed \n";
+        cout << "Construction failed \n";
         return 1;
     }
 

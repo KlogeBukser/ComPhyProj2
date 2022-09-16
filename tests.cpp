@@ -23,11 +23,11 @@ bool test_jacobi_eigensolver(){
     int iterations;
     bool converged;
 
+    // calls the eigensolver function to find eigenvalues and eigenvectors
     jacobi_eigensolver(test_matrix, tol, test_eigvals,
     test_eigvecs, maxiter, iterations, converged);
 
-    cout << test_eigvecs;
-
+    // Calls comparison function, and returns the boolean output
     return compare_with_analytical(test_eigvecs,test_eigvals, tol, tol);
 }
 
@@ -49,8 +49,6 @@ bool test_max_offdiag_symmetric(){
 
     // Comparison between expected and computed values
     if (max_val != 0.7 || k != 1 || l != 2){
-        cout << "The algorithm was unable to find the largest off diagonal element \n";
-        cout << "max_val = " << max_val << endl;
         return false;
     }
 
@@ -83,29 +81,44 @@ bool test_tridiagonal_construction(){
 }
 
 bool compare_with_analytical(const arma::mat& vecs, const arma::vec& vals, const double& vec_tol, const double& val_tol){
+    // Takes references to a set of eigenvectors and eigenvalues, and two doubles for tolerance
+    // Compares these with the analytical solutions to the buckling beam problem
+    // Note that this function is specific for the buckling beam problem,
+    // but can be changed by adding parameters for a and d
 
+
+    // Declares relational values
     double abs_prod, diff_vals;
 
+    // Finds number of iterations used for the problem,
+    // and makes empty containers to hold analytic results
     int n = vecs.n_cols;
     arma::mat eig_vecs(n,n);
     arma::vec eig_vals(n);
 
+    // Computes constants for the buckling beam problem with n iterations
     double scale = pow(n,2);
     double a = -scale;
     double d = 2*scale;
+
+
+    // Computes eigenvalues and eigenvectors in a loop, then normalizes the vectors
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
             eig_vecs(i,j) = sin(((i+1)*(j+1)*M_PI) / (n+1));
         }
         eig_vals(i) = d + 2*a * cos(((i+1) * M_PI) / (n+1));
     }
-
     eig_vecs = arma::normalise(eig_vecs);
+
+    // Compares the absolute difference of the two sets of eigenvalues
+    // Uses the inner product of the vectors to check how much they deviate from being paralell
+    // Uses separate tolerances for values and vectors
     for (int i = 0; i < n; i++){
         abs_prod = abs(arma::dot(vecs.col(i),eig_vecs.col(i)));
         diff_vals = abs(vals(i) - eig_vals(i));
         if (diff_vals > val_tol || abs_prod < 1 - vec_tol){
-            cout << "anal, comp = " << eig_vals(i) << ", " << vals(i) << endl;
+            return false;
         }
     }
     return true;
