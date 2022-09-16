@@ -14,6 +14,14 @@ arma::mat create_tridiagonal(int n, double a, double d, double e) {
 }
 
 arma::mat create_tridiagonal_symmetric(int n, double a, double d) {
-    // Creates a symmetric tridiagonal matrix with create_tridiagonal as a 'parent' function
+    // Creates a symmetric tridiagonal matrix
+    // Uses create_tridiagonal as parent function
     return create_tridiagonal(n,a,d,a);
+}
+
+arma::mat create_tridiagonal_buckling_beam(int n){
+    // Creates the initial matrix of dimension n*n for the buckling beam problem
+    // Uses create_tridiagonal_symmetric as parent function
+    double scale = pow(n+1,2);
+    return create_tridiagonal_symmetric(n, -scale, 2*scale);
 }
