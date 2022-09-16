@@ -1,5 +1,5 @@
-#ifndef TEST_FUNCTIONS_HPP
-#define TEST_FUNCTIONS_HPP
+#ifndef TESTS_HPP
+#define TESTS_HPP
 
 bool test_max_offdiag_symmetric();
 bool test_tridiagonal_construction();

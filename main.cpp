@@ -7,7 +7,7 @@
 #include <armadillo>
 
 #include "construct_matrix.hpp"
-#include "test_functions.hpp"
+#include "tests.hpp"
 #include "algorithm.hpp"
 
 using namespace std;
