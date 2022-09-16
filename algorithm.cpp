@@ -32,6 +32,7 @@ arma::mat& eigenvectors, const int maxiter, int& iterations, bool& converged){
         iterations++;
     }
 
+    cout << R << endl;
     eigenvectors = R;
     eigenvalues = arma::diagvec(A);
 

@@ -68,18 +68,18 @@ bool test_tridiagonal_construction(){
 
     // Defines specific values for this matrix
     int n = 6;
-    double scale = pow(n+1,2);
-    double a = -1;
-    double d = 2;
+    double scale = pow(n,2);
+    double a = -1*scale;
+    double d = 2*scale;
 
     // Defines matrix for the test
     // Finds eigenvalues and vectors with the armadillo function eig_sym
     arma::mat test_matrix = create_tridiagonal(n,a,d,a);
-    arma::vec test_eigvals;
-    arma::mat test_eigvecs;
+    arma::vec test_eigvals(n);
+    arma::mat test_eigvecs(n,n);
     eig_sym(test_eigvals, test_eigvecs, test_matrix);
 
-    return compare_with_analytical(test_eigvecs,test_eigvals, tol, tol);
+    return compare_with_analytical(test_eigvecs, test_eigvals, tol, tol);
 }
 
 bool compare_with_analytical(const arma::mat& vecs, const arma::vec& vals, const double& vec_tol, const double& val_tol){
@@ -90,22 +90,22 @@ bool compare_with_analytical(const arma::mat& vecs, const arma::vec& vals, const
     arma::mat eig_vecs(n,n);
     arma::vec eig_vals(n);
 
-    double scale = pow(n+1,2);
+    double scale = pow(n,2);
     double a = -scale;
-    double d = -2*scale;
+    double d = 2*scale;
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
             eig_vecs(i,j) = sin(((i+1)*(j+1)*M_PI) / (n+1));
         }
         eig_vals(i) = d + 2*a * cos(((i+1) * M_PI) / (n+1));
     }
+
     eig_vecs = arma::normalise(eig_vecs);
     for (int i = 0; i < n; i++){
         abs_prod = abs(arma::dot(vecs.col(i),eig_vecs.col(i)));
         diff_vals = abs(vals(i) - eig_vals(i));
         if (diff_vals > val_tol || abs_prod < 1 - vec_tol){
-            cout << "The eigenvectors or eigenvalues are wrong! \n";
-            return false;
+            cout << "anal, comp = " << eig_vals(i) << ", " << vals(i) << endl;
         }
     }
     return true;

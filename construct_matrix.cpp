@@ -22,6 +22,6 @@ arma::mat create_tridiagonal_symmetric(int n, double a, double d) {
 arma::mat create_tridiagonal_buckling_beam(int n){
     // Creates the initial matrix of dimension n*n for the buckling beam problem
     // Uses create_tridiagonal_symmetric as parent function
-    double scale = pow(n+1,2);
+    double scale = pow(n,2);
     return create_tridiagonal_symmetric(n, -scale, 2*scale);
 }
