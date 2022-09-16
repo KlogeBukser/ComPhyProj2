@@ -16,8 +16,10 @@ int main(int argc, char * argv[]){
 
     if (test_tridiagonal_construction() && test_max_offdiag_symmetric()){
         //This is just a test, it isn't needed for the program to work.
-        cout << "It works \n";
-        return 0;
+        if (test_jacobi_eigensolver()){
+            cout << "It works \n";
+            return 0;
+        }
     }
 
     cout << "Something is wrong \n";

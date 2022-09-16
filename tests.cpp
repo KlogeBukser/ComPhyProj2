@@ -3,9 +3,38 @@
 
 #include "construct_matrix.hpp"
 #include "algorithm.hpp"
+#include "tests.hpp"
 using namespace std;
 
+bool test_jacobi_eigensolver(){
+    // Tests whether the eigenvalues, and eigenvectors found using the
+    // jacobi_eigensolver function are the same as the analytical ones
+
+    // Constructs the test matrix
+    // Makes empty containers for eigenvalues and eigenvectors
+    // Declares convergence condition and number of iterations
+    // Chooses tolerance and maximum number of iterations
+    int n = 6;
+    arma::mat test_matrix = create_tridiagonal_buckling_beam(n);
+    double tol = 1e-12;
+    arma::vec test_eigvals(n);
+    arma::mat test_eigvecs(n,n);
+    int maxiter = 100;
+    int iterations;
+    bool converged;
+
+    jacobi_eigensolver(test_matrix, tol, test_eigvals,
+    test_eigvecs, maxiter, iterations, converged);
+    
+    cout << test_eigvecs;
+
+    return compare_with_analytical(test_eigvecs,test_eigvals, tol, tol);
+}
+
 bool test_max_offdiag_symmetric(){
+    // Tests whether the function max_offdiag_symmetric can find the indices of
+    // the largest off-diagonal element of a symmetric matrix, and its value
+
     // makes a test matrix
     arma::mat test_mat(4,4,arma::fill::eye);
     test_mat(0,3) = 0.5;
@@ -34,11 +63,8 @@ bool test_tridiagonal_construction(){
     // and vectors from armadillo with the analytical ones
     // returns true if they are sufficiently close, otherwise false
 
-    // Tolerance and comparison values for test
+    // Tolerance
     double tol = 1e-12;
-    double diff_vals;
-    double diff_vecs;
-
 
     // Defines specific values for this matrix
     int n = 6;
@@ -51,32 +77,32 @@ bool test_tridiagonal_construction(){
     arma::vec test_eigvals;
     arma::mat test_eigvecs;
     eig_sym(test_eigvals, test_eigvecs, test_matrix);
-    for (int i = 0; i < n; i++){
-        if(test_eigvecs(0,i) < 0){
-            // Flip sign of vector if first element is negative
-            test_eigvecs.col(i) *= (-1);
-        }
-    }
 
-    // Makes analytical eigen-values and eigen-vectors
-    // Scales eigen-vectors to unit length
-    arma::vec anal_eigvals(n);
-    arma::mat anal_eigvecs_unscaled(n,n);
+    return compare_with_analytical(test_eigvecs,test_eigvals, tol, tol);
+}
+
+bool compare_with_analytical(const arma::mat& vecs, const arma::vec& vals, const double& vec_tol, const double& val_tol){
+
+    double abs_prod, diff_vals;
+
+    int n = vecs.n_cols;
+    arma::mat eig_vecs(n,n);
+    arma::vec eig_vals(n);
+
+    double a = -pow(n+1,2);
+    double d = -2*a;
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
-            anal_eigvecs_unscaled(i,j) = sin(((i+1)*(j+1)*M_PI) / (n+1));
+            eig_vecs(i,j) = sin(((i+1)*(j+1)*M_PI) / (n+1));
         }
-        anal_eigvals(i) = d + 2*a * cos(((i+1) * M_PI) / (n+1));
+        eig_vals(i) = d + 2*a * cos(((i+1) * M_PI) / (n+1));
     }
-    arma::mat anal_eigvecs = arma::normalise(anal_eigvecs_unscaled);
-
-    // Tests every eigenvalue and eigenvector
-    // Return false if their difference is larger than the tolerance, otherwise true
+    eig_vecs = arma::normalise(eig_vecs);
     for (int i = 0; i < n; i++){
-        diff_vals = abs(test_eigvals(i) - anal_eigvals(i));
-        diff_vecs = max(abs(test_eigvecs.col(i) - anal_eigvecs.col(i)));
-        if (diff_vals > tol || diff_vecs > tol){
-            cout << "Tridiagonal matrix construction failed \n";
+        abs_prod = abs(arma::dot(vecs.col(i),eig_vecs.col(i)));
+        diff_vals = abs(vals(i) - eig_vals(i));
+        if (diff_vals > val_tol || abs_prod < 1 - vec_tol){
+            cout << "The eigenvectors or eigenvalues are wrong! \n";
             return false;
         }
     }
