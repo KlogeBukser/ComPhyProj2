@@ -14,7 +14,7 @@ double max_offdiag_symmetric(const arma::mat& A, int& k, int& l){
         for (int j = i + 1; j < n; j++){
             if (abs(A(i,j)) > abs(max_val)){
                 // Updates value if condition is met
-                max_val = A(i,j);
+                max_val = abs(A(i,j));
                 k = i;
                 l = j;
             }

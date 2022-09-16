@@ -19,8 +19,8 @@ bool test_max_offdiag_symmetric(){
     double max_val = max_offdiag_symmetric(test_mat,k,l);
 
     // Comparison between expected and computed values
-    if (max_val != -0.7 || k != 1 || l != 2){
-        cout << "You dun goofed \n";
+    if (max_val != 0.7 || k != 1 || l != 2){
+        cout << "The algorithm was unable to find the largest off diagonal element \n";
         cout << "max_val = " << max_val << endl;
         return false;
     }
