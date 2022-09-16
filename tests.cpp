@@ -25,7 +25,7 @@ bool test_jacobi_eigensolver(){
 
     jacobi_eigensolver(test_matrix, tol, test_eigvals,
     test_eigvecs, maxiter, iterations, converged);
-    
+
     cout << test_eigvecs;
 
     return compare_with_analytical(test_eigvecs,test_eigvals, tol, tol);
@@ -68,8 +68,9 @@ bool test_tridiagonal_construction(){
 
     // Defines specific values for this matrix
     int n = 6;
-    double a = -1*pow(n+1,2);
-    double d = 2*pow(n+1,2);
+    double scale = pow(n+1,2);
+    double a = -1;
+    double d = 2;
 
     // Defines matrix for the test
     // Finds eigenvalues and vectors with the armadillo function eig_sym
