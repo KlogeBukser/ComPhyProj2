@@ -90,8 +90,9 @@ bool compare_with_analytical(const arma::mat& vecs, const arma::vec& vals, const
     arma::mat eig_vecs(n,n);
     arma::vec eig_vals(n);
 
-    double a = -pow(n+1,2);
-    double d = -2*a;
+    double scale = pow(n+1,2);
+    double a = -scale;
+    double d = -2*scale;
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
             eig_vecs(i,j) = sin(((i+1)*(j+1)*M_PI) / (n+1));
