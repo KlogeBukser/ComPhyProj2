@@ -1,7 +1,8 @@
-#Computation Physics Project 2
+#Computational Physics Project 2
 
 #TO DO:
 - Look over error handling for test functions
+- Consider reasonable tolerance for test functions, i.e. 'is 1e12 too small/big?'
 
 #ISSUES:
 - Code is super slow due to the armadillo library. Including it adds several seconds to compiling even when not used. It is unclear how much time the armadillo function calls take.
