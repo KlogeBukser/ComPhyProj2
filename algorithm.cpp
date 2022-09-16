@@ -22,9 +22,9 @@ arma::mat& eigenvectors, const int maxiter, int& iterations, bool& converged){
     iterations = 0;
     converged = false;
 
-    while (iterations < maxiter || max_val > eps){
+    while (iterations < maxiter){
         max_val = max_offdiag_symmetric(A, k, l);
-        if (max_val == 0) {
+        if (max_val < eps) {
             converged = true;
             break;
         }
