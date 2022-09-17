@@ -30,11 +30,9 @@ int main(int argc, char * argv[]){
         return 1;
     }
 
-    // arma::uvec test(5);
-    // for (arma::uword i = 0; i < 5; i++){
-    //     test(i) = 10*(i+1);
-    // }
-    // solve_n_rotations(test);
+    solve_n_rotations("textfiles/req_rotations_small.txt", 2, 20);
+    solve_n_rotations("textfiles/req_rotations_even.txt", 2, 60, 2);
+    solve_n_rotations("textfiles/req_rotations_odd.txt", 3, 61, 2);
 
     return 0;
 }

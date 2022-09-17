@@ -6,12 +6,20 @@
 #include "construct_matrix.hpp"
 #include "find_results.hpp"
 
+void solve_n_rotations(const std::string& filename, const arma::uword start, const arma::uword end){
+    solve_n_rotations(filename, start, end, 1);
+}
+
+void solve_n_rotations(const std::string& filename, const arma::uword start, const arma::uword end, const int step){
+    arma::uvec dims = arma::regspace<arma::uvec>(start,step,end);
+    solve_n_rotations(filename, dims);
+}
 
 arma::uword req_rotations(const int& n, const double& tol, bool& convergence){
     arma::mat matrix = create_tridiagonal_buckling_beam(n);
     arma::vec eigvals(n);
     arma::mat eigvecs(n,n);
-    int maxiter = 100000;
+    int maxiter = 10000;
     int iterations;
 
     jacobi_eigensolver(matrix, tol, eigvals,
@@ -20,7 +28,7 @@ arma::uword req_rotations(const int& n, const double& tol, bool& convergence){
     return iterations;
 }
 
-void solve_n_rotations(const arma::uvec& mat_dimensions){
+void solve_n_rotations(const std::string& filename, const arma::uvec& mat_dimensions){
 
     double tol = 1e-8;
     bool convergence;
@@ -39,8 +47,5 @@ void solve_n_rotations(const arma::uvec& mat_dimensions){
         }
     }
     vectors.col(1) = iterations;
-    std::string filename = "textfiles/req_rotations.txt";
-    if (vectors.save(filename,arma::csv_ascii)){
-        std::cout << "File was written \n";
-    }
+    vectors.save(filename, arma::csv_ascii);
 }
