@@ -25,3 +25,8 @@ arma::mat create_tridiagonal_buckling_beam(int n){
     double scale = pow(n,2);
     return create_tridiagonal_symmetric(n, -scale, 2*scale);
 }
+
+arma::mat create_symmetric_dense(int n){
+    arma::mat dense = arma::mat(n,n).randn();
+    return arma::symmatu(dense);
+}

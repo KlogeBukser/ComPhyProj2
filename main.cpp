@@ -30,9 +30,10 @@ int main(int argc, char * argv[]){
         return 1;
     }
 
-    solve_n_rotations("textfiles/rot_small.txt", 2, 20);
-    solve_n_rotations("textfiles/rot_even.txt", 2, 20, 2);
-    solve_n_rotations("textfiles/rot_odd.txt", 3, 21, 2);
+    solve_n_rotations("textfiles/sparse.txt", 10, 200, false);
+    solve_n_rotations("textfiles/dense.txt", 10, 200, true);
+
+
 
     return 0;
 }

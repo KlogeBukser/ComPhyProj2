@@ -6,17 +6,24 @@
 #include "construct_matrix.hpp"
 #include "find_results.hpp"
 
-void solve_n_rotations(const std::string& filename, const arma::uword start, const arma::uword end){
-    solve_n_rotations(filename, start, end, 1);
+void solve_n_rotations(const std::string& filename, const arma::uword start, const arma::uword end, bool dense){
+    solve_n_rotations(filename, start, end, 1, dense);
 }
 
-void solve_n_rotations(const std::string& filename, const arma::uword start, const arma::uword end, const int step){
+void solve_n_rotations(const std::string& filename, const arma::uword start, const arma::uword end, const int step, bool dense){
     arma::uvec dims = arma::regspace<arma::uvec>(start,step,end);
-    solve_n_rotations(filename, dims);
+    solve_n_rotations(filename, dims, dense);
 }
 
-arma::uword req_rotations(const int& n, const double& tol, bool& convergence){
-    arma::mat matrix = create_tridiagonal_buckling_beam(n);
+
+arma::uword req_rotations(const int& n, const double& tol, bool& convergence, bool dense){
+    arma::mat matrix;
+    if (dense){
+        matrix = create_symmetric_dense(n);
+    } else {
+        matrix = create_tridiagonal_buckling_beam(n);
+    }
+
     arma::vec eigvals(n);
     arma::mat eigvecs(n,n);
     int maxiter = 10000;
@@ -28,7 +35,7 @@ arma::uword req_rotations(const int& n, const double& tol, bool& convergence){
     return iterations;
 }
 
-void solve_n_rotations(const std::string& filename, const arma::uvec& mat_dimensions){
+void solve_n_rotations(const std::string& filename, const arma::uvec& mat_dimensions, bool dense){
 
     double tol = 1e-8;
     bool convergence;
@@ -39,7 +46,7 @@ void solve_n_rotations(const std::string& filename, const arma::uvec& mat_dimens
 
     for (int i = 0; i < n; i++){
         convergence = false;
-        iterations(i) = req_rotations(mat_dimensions(i),tol,convergence);
+        iterations(i) = req_rotations(mat_dimensions(i),tol,convergence, dense);
         if (!convergence){
             vectors.resize(i,2);
             iterations.resize(i);
