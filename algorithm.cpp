@@ -1,9 +1,22 @@
 #include <armadillo>
 #include <cmath>
 #include "algorithm.hpp"
+#include "construct_matrix.hpp"
 
 using namespace std;
 
+bool jacobi_eigensolver(int dim, arma::vec& eigenvalues, arma::mat& eigenvectors){
+    // Simpler version of the Eigensolver for when you only care about the eigenvalues and vectors.
+    // Returns convergence to make sure the algorithm finished
+    double tol = 1e-8;
+    bool converged;
+    int maxiter = 100000;
+    int iterations;
+    arma::mat A = create_tridiagonal_buckling_beam(dim);
+    jacobi_eigensolver(A,tol,eigenvalues, eigenvectors, maxiter, iterations, converged);
+
+    return converged;
+}
 
 void jacobi_eigensolver(arma::mat& A, double eps, arma::vec& eigenvalues,
 arma::mat& eigenvectors, const int maxiter, int& iterations, bool& converged){
@@ -44,6 +57,13 @@ arma::mat& eigenvectors, const int maxiter, int& iterations, bool& converged){
     arma::uvec indices = arma::sort_index(eigenvalues);
     eigenvectors = eigenvectors.cols(indices);
     eigenvalues = eigenvalues.elem(indices);
+
+    // Makes sure the first element in positive by flipping some vectors
+    for (int i = 0; i < n; i++){
+        if (eigenvectors(0,i) < 0){
+            eigenvectors.col(i) *= -1;
+        }
+    }
 }
 
 void jacobi_rotate(arma::mat& A, arma::mat& R, const int& k, const int& l){

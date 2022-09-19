@@ -4,6 +4,7 @@
 #include "construct_matrix.hpp"
 #include "algorithm.hpp"
 #include "tests.hpp"
+#include "find_results.hpp"
 using namespace std;
 
 bool test_jacobi_eigensolver(){
@@ -62,7 +63,7 @@ bool test_tridiagonal_construction(){
     // returns true if they are sufficiently close, otherwise false
 
     // Tolerance
-    double tol = 1e-12;
+    double tol = 1e-8;
 
     // Defines specific values for this matrix
     int n = 6;
@@ -83,8 +84,7 @@ bool test_tridiagonal_construction(){
 bool compare_with_analytical(const arma::mat& vecs, const arma::vec& vals, const double& vec_tol, const double& val_tol){
     // Takes references to a set of eigenvectors and eigenvalues, and two doubles for tolerance
     // Compares these with the analytical solutions to the buckling beam problem
-    // Note that this function is specific for the buckling beam problem,
-    // but can be changed by adding parameters for a and d
+    // Note that this function is specific for the buckling beam problem
 
 
     // Declares relational values
@@ -96,20 +96,8 @@ bool compare_with_analytical(const arma::mat& vecs, const arma::vec& vals, const
     arma::mat eig_vecs(n,n);
     arma::vec eig_vals(n);
 
-    // Computes constants for the buckling beam problem with n iterations
-    double scale = pow(n,2);
-    double a = -scale;
-    double d = 2*scale;
-
-
-    // Computes eigenvalues and eigenvectors in a loop, then normalizes the vectors
-    for (int i = 0; i < n; i++){
-        for (int j = 0; j < n; j++){
-            eig_vecs(i,j) = sin(((i+1)*(j+1)*M_PI) / (n+1));
-        }
-        eig_vals(i) = d + 2*a * cos(((i+1) * M_PI) / (n+1));
-    }
-    eig_vecs = arma::normalise(eig_vecs);
+    // Computes analytical eigenvalues and eigenvectors in a loop, then normalizes the vectors
+    find_analytical(n,eig_vecs,eig_vals);
 
     // Compares the absolute difference of the two sets of eigenvalues
     // Uses the inner product of the vectors to check how much they deviate from being paralell

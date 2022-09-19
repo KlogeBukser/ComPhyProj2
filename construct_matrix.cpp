@@ -27,6 +27,7 @@ arma::mat create_tridiagonal_buckling_beam(int n){
 }
 
 arma::mat create_symmetric_dense(int n){
+    // Creates a random dense symmetric matrix of dimensions n*n
     arma::mat dense = arma::mat(n,n).randn();
     return arma::symmatu(dense);
 }
