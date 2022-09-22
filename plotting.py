@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-def read_plot(filenames, labels, title, xlab, ylab, compare = ""):
+def read_plot(filenames, outfilename, labels, title, xlab, ylab, compare = ""):
     """
     Plots a set of filenames, with the option of also plotting 2x^2 for comparison
     """
@@ -26,10 +26,10 @@ def read_plot(filenames, labels, title, xlab, ylab, compare = ""):
             """ Optional comparison """
             plt.plot(x_vals[i], 2*x_vals[i]**2, label = "2x^2")
     plt.legend()
-    plt.show()
+    plt.savefig(outfilename)
 
 
-def plot_eigvecs(filename):
+def plot_eigvecs(filename, outfilename):
     """
     Plots the 3 eigenvectors with smallest eigenvalues as well as their analytical counterparts
     """
@@ -61,4 +61,4 @@ def plot_eigvecs(filename):
     plt.xlabel("x")
     plt.ylabel("u(x)")
     plt.legend()
-    plt.show()
+    plt.savefig(outfilename)

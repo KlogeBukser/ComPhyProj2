@@ -13,7 +13,7 @@ os.system("./main.out")
 filenames = ["sparse.txt"]
 labels = ["Jacobi"]
 title = "How many rotations are necessary for a square matrix"
-read_plot(filenames,labels, title, "Dimension", "Jacobi Rotations","2x_squared")
+read_plot(filenames, "n_ro_SR.pdf", labels, title, "Dimension", "Jacobi Rotations","2x_squared")
 #"""
 
 # Block 4: Produce plot relation between matrix dimension and number of rotations.
@@ -23,12 +23,12 @@ read_plot(filenames,labels, title, "Dimension", "Jacobi Rotations","2x_squared")
 filenames = ["sparse.txt","dense.txt"]
 labels = ["Sparse","Dense"]
 title = "Comparison of rotation method for dense and sparse matrices"
-read_plot(filenames,labels, title, "Dimension", "Jacobi Rotations")
+read_plot(filenames,"comp_dense.pdf", labels, title, "Dimension", "Jacobi Rotations")
 #"""
 
 # Block 5: produce two plots, each comparing eigenvectors from the jacobi method with the analytical values
 #"""
 # Produces plots of the 3 eigenvectors with lowest eigenvalues, and compares with the analytical values
-plot_eigvecs("vecs10.txt")
-plot_eigvecs("vecs100.txt")
+plot_eigvecs("vecs10.txt","vecs10.pdf")
+plot_eigvecs("vecs100.txt","vecs100.pdf")
 #"""

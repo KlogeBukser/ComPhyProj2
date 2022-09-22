@@ -7,11 +7,7 @@
 
 #TO DO:
 ** Important
-- Consider if we should write about how to produce other results, beyond those asked for
-- Make it so plotting functions save a plot instead of showing it
 - Restructure files into folders (cpp,hpp,py,txt,pdf) and make sure code still works after
-- Consider if it makes sense for dense and sparse matrices to need same number of rotations
-- Write detailed how to for using this program. Ideally every relevant file is made from one run of main.cpp
 - Look over error handling for test functions
 - Look over labels and titles for plots
 
